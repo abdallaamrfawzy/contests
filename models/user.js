@@ -21,23 +21,7 @@ const userSchema = new mongoose.Schema({
     image: {
         type: String,
     },
-    friends: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-        },
-    ]
-    ,
-    desires:
-    {
-        type: Array,
-        ref: "User",
-    },
-    points: {
-        type: Number,
-    },
-    loginStartTime: { type: Date },
-    lastUpdatedTime: { type: Date }
+
 });
 userSchema.set("toJSON", {
     transform: (doc, result) => {

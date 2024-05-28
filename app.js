@@ -4,19 +4,18 @@ const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
 const bodyParser = require('body-parser');
-const mongoose = require("mongoose");
-const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@socialweb.u6ulaex.mongodb.net/?retryWrites=true&w=majority&appName=SocialWeb`
 const userRoute = require("./routes/users.js");
+const connectDB = require("./config/database.js");
+const router = require("./routes/index.js");
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors({ origin: "*" }));
-app.use("/api/users", userRoute);
+app.use("/api", router);
 
-// connect to database 
-mongoose.connect(url).then(() => {
-    console.log("mongodb connect success")
-})
+
+
+connectDB();
 
 app.listen(port, () => {
     console.log(`Server start on port ${port} `);
