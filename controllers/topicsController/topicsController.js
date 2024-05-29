@@ -114,6 +114,7 @@ const getTopicById = async (req, res, next) => {
         if (!topic) {
             return res.status(404).json({ message: 'Topic not found' });
         }
+
         const total = Date.parse(topic.deadline) - Date.parse(new Date());
         const seconds = Math.floor((total / 1000) % 60);
         const minutes = Math.floor((total / 1000 / 60) % 60);
@@ -122,30 +123,6 @@ const getTopicById = async (req, res, next) => {
         if (days <= 0 && seconds <= 0 && minutes <= 0 && hours <= 0) {
             await handleTopicEnd(TopicId)
             topic.isActive = false;
-        }
-        let similarAnswer = null;
-
-        if (topic.bestAnswer) {
-            const bestAnswerText = topic.bestAnswer.toLowerCase();
-
-            let maxSimilarity = 0;
-
-            topic.answers.forEach(answer => {
-                const currentAnswerText = answer.text.toLowerCase();
-                const similarity = calculateSimilarity(bestAnswerText, currentAnswerText);
-
-                if (similarity > maxSimilarity) {
-                    maxSimilarity = similarity;
-                    similarAnswer = {
-                        text: answer.text,
-                        user: {
-                            id: answer.user._id,
-                            username: answer.user.username,
-                            image: answer.user.image
-                        }
-                    };
-                }
-            });
         }
 
         const formattedTopic = {
@@ -166,8 +143,7 @@ const getTopicById = async (req, res, next) => {
                     image: answer.user.image
                 }
             })),
-            bestAnswer: topic.bestAnswer ? topic.topic : null,
-            similarAnswer: similarAnswer || null
+            bestAnswer: topic.bestAnswer ? topic.bestAnswer : null
         };
 
         res.status(200).json({ topic: formattedTopic });
@@ -177,43 +153,8 @@ const getTopicById = async (req, res, next) => {
     }
 };
 
-function calculateSimilarity(text1, text2) {
-    const similarity = similarText(text1, text2);
-    return similarity / Math.max(text1.length, text2.length);
-}
 
-function similarText(first, second) {
-    let pos1 = 0, pos2 = 0;
-    let max = 0;
 
-    for (let p = 0; p < first.length; p++) {
-        for (let q = 0; q < second.length; q++) {
-            let l = 0;
-            while (p + l < first.length && q + l < second.length && first[p + l] === second[q + l]) {
-                l++;
-            }
-            if (l > max) {
-                max = l;
-                pos1 = p;
-                pos2 = q;
-            }
-        }
-    }
-
-    let sum = max;
-
-    if (sum) {
-        if (pos1 && pos2) {
-            sum += similarText(first.substr(0, pos1), second.substr(0, pos2));
-        }
-
-        if ((pos1 + max < first.length) && (pos2 + max < second.length)) {
-            sum += similarText(first.substr(pos1 + max, first.length - pos1 - max), second.substr(pos2 + max, second.length - pos2 - max));
-        }
-    }
-
-    return sum;
-}
 
 const addAnswer = asyncWrapper(
     async (req, res, next) => {
