@@ -113,12 +113,15 @@ const getContestById = async (req, res, next) => {
         if (!contest) {
             return res.status(404).json({ message: 'Contest not found' });
         }
-        const days = Math.ceil((new Date(contest.deadline) - new Date()) / (1000 * 60 * 60 * 24));
-        if (days <= 0) {
+        const total = Date.parse(deadline) - Date.parse(new Date());
+        const seconds = Math.floor((total / 1000) % 60);
+        const minutes = Math.floor((total / 1000 / 60) % 60);
+        const hours = Math.floor((total / 1000 / 60 / 60) % 24);
+        const days = Math.floor(total / (1000 * 60 * 60 * 24));
+        if (days <= 0 && seconds <= 0 && minutes <= 0 && hours <= 0) {
             await handleContestEnd(contestId)
             contest.isActive = false;
         }
-
         let bestAnswer = null;
         let similarAnswer = null;
 
