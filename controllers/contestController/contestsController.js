@@ -113,7 +113,7 @@ const getContestById = async (req, res, next) => {
         if (!contest) {
             return res.status(404).json({ message: 'Contest not found' });
         }
-        const total = Date.parse(deadline) - Date.parse(new Date());
+        const total = Date.parse(contest.deadline) - Date.parse(new Date());
         const seconds = Math.floor((total / 1000) % 60);
         const minutes = Math.floor((total / 1000 / 60) % 60);
         const hours = Math.floor((total / 1000 / 60 / 60) % 24);
