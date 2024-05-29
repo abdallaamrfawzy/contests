@@ -119,6 +119,7 @@ const getContestById = async (req, res, next) => {
             contest.isActive = false;
         }
 
+        await handleContestEnd(contestId)
 
         let bestAnswer = null;
         let similarAnswer = null;
