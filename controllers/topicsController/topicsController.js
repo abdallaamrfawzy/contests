@@ -49,20 +49,20 @@ async function handleTopicEnd(TopicId) {
         }
 
         const prompt = `a question: ${topic.title}. Analyze these  question And analyze the answers
-        Briefly give your opinion on this topic: ${topic.answers.map(answer => answer.text).join(", ")}`;
+        Briefly give your opinion on this topicWithout going into details
+        Give only one answer without going into details ,Don't answer with questions, I just want one short answer from you: ${topic.answers.map(answer => answer.text).join(", ")}`;
 
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(prompt);
         const response = result.response;
         const bestAnswer = response.text();
-
-        console.log(`Best answer for topic ${contest.title}: ${bestAnswer}`);
-        contest.isActive = false;
-        contest.bestAnswer = bestAnswer;
-        await contest.save();
+        console.log(`Best answer for topic ${topic.title}: ${bestAnswer}`);
+        topic.isActive = false;
+        topic.bestAnswer = bestAnswer;
+        await topic.save();
 
     } catch (error) {
-        console.error(`Error handling contest end for contest ID ${TopicId}:`, error);
+        console.error(`Error handling topic end for contest ID ${TopicId}:`, error);
     }
 }
 
@@ -166,7 +166,7 @@ const getTopicById = async (req, res, next) => {
                     image: answer.user.image
                 }
             })),
-            bestAnswer: topic.bestAnswer ? contest.topic : null,
+            bestAnswer: topic.bestAnswer ? topic.topic : null,
             similarAnswer: similarAnswer || null
         };
 
