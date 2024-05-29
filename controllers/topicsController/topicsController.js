@@ -58,7 +58,6 @@ async function handleTopicEnd(TopicId) {
 
         console.log(`Best answer for topic ${contest.title}: ${bestAnswer}`);
         contest.isActive = false;
-        await contest.save();
         contest.bestAnswer = bestAnswer;
         await contest.save();
 
