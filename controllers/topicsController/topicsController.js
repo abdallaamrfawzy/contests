@@ -121,7 +121,7 @@ const getTopicById = async (req, res, next) => {
         const hours = Math.floor((total / 1000 / 60 / 60) % 24);
         const days = Math.floor(total / (1000 * 60 * 60 * 24));
         if (days <= 0 && seconds <= 0 && minutes <= 0 && hours <= 0) {
-            await handleTopicEnd(contestId)
+            await handleTopicEnd(TopicId)
             topic.isActive = false;
         }
         let similarAnswer = null;
